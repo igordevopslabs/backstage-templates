@@ -24,6 +24,13 @@ spec:
         description: 'Go application that prints "Hello, World!"'
         access: public # or 'private'
 
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: 'catalog-info.yaml'
+
   parameters:
     - title: Name of the Go project
       required:
