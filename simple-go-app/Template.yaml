@@ -19,7 +19,8 @@ spec:
       name: Publish to GitHub
       action: publish:github
       input:
-        repoUrl: 'github.com/igordevopslabs/${{ parameters.name }}'
+        #repoUrl: 'github.com/igordevopslabs/${{ parameters.name }}'
+        repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
         description: 'Go application that prints "Hello, World!"'
         access: public # or 'private'
 
