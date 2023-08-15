@@ -13,13 +13,17 @@ spec:
       name: Log a custom message
       action: debug:log
       input:
-        message: "Logging the custom message: {{ parameters.message }}"
+        message: "Logging the custom message: ${{ parameters.message }}"
 
   parameters:
-    - title: message
-      required: [message]
+    - title: Write some message
+      required:
+        - message
       properties:
         message:
-          title: Mensagem a ser exibida
+          title: Message
           type: string
-          description: "EX: Oi, meu nome é Goku"
+          description: Unique name of the component
+          ui:autofocus: true
+          ui:options:
+            rows: 5
