@@ -22,14 +22,7 @@ spec:
         #repoUrl: 'github.com/igordevopslabs/${{ parameters.name }}'
         repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
         description: 'Go application that prints "Hello, World!"'
-        access: public # or 'private'
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish-github.output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
+        access: private # or 'private'
 
   parameters:
     - title: Name of the Go project
@@ -41,3 +34,9 @@ spec:
           type: string
           description: Unique name of the Go project
           ui:autofocus: true
+
+  output:
+    links:
+      - title: Prosseguir para o repositório de aplicação
+        url: ${{ steps.publish-github.output.remoteUrl }}
+        icon: github
