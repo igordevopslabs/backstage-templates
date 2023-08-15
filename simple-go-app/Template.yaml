@@ -9,7 +9,7 @@ spec:
   type: service
 
   steps:
-   - id: fetch-base
+    - id: fetch-base
       name: Fetch base template
       action: fetch:plain
       input:
