@@ -6,3 +6,4 @@ spec:
   type: url
   targets:
     - ./hello-world/Template.yaml
+    - ./simple-go-app/Template.yaml
