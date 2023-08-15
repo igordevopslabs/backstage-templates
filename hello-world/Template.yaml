@@ -1,12 +1,13 @@
-apiVersion: backstage.io/v1beta1
+apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: log-message-template
   title: Log Message Template
   description: Logs a custom message during scaffolding
 spec:
-  owner: team-a
+  owner: log-message
   type: service
+  
   steps:
     - id: log-custom-message
       name: Log a custom message
