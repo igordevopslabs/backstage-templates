@@ -21,7 +21,7 @@ spec:
       input:
         repoUrl: 'github.com/igordevopslabs/${{ parameters.name }}'
         description: 'Go application that prints "Hello, World!"'
-        access: private # or 'public'
+        access: public # or 'private'
 
   parameters:
     - title: Name of the Go project
