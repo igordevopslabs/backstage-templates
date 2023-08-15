@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1beta1
+kind: Template
+metadata:
+  name: log-message-template
+  title: Log Message Template
+  description: Logs a custom message during scaffolding
+spec:
+  owner: team-a
+  type: service
+  steps:
+    - id: log-custom-message
+      name: Log a custom message
+      action: debug:log
+      input:
+        message: "Logging the custom message: {{ parameters.message }}"
+  schema:
+    required:
+      - message
+    properties:
+      message:
+        title: Message to log
+        type: string
+        description: A custom message you want to log
