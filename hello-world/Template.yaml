@@ -14,11 +14,12 @@ spec:
       action: debug:log
       input:
         message: "Logging the custom message: {{ parameters.message }}"
-  schema:
-    required:
-      - message
-    properties:
-      message:
-        title: Message to log
-        type: string
-        description: A custom message you want to log
+
+  parameters:
+    - title: message
+      required: [message]
+      properties:
+        message:
+          title: Mensagem a ser exibida
+          type: string
+          description: "EX: Oi, meu nome é Goku"
