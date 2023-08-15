@@ -5,4 +5,4 @@ metadata:
 spec:
   type: url
   targets:
-    - ./hello-word/Template.yaml
+    - ./hello-world/Template.yaml
