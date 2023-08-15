@@ -1,0 +1,37 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: go-helloworld-template
+  title: Go Hello World Template
+  description: Creates a Go application that prints "Hello, World!" and publishes it to GitHub
+spec:
+  owner: go-helloworld
+  type: service
+
+  steps:
+    - id: fetch-base
+      name: Fetch base template
+      action: fetch:cookiecutter
+      input:
+        url: https://github.com/igordevopslabs/go-app-template/tree/main
+        values:
+          name: ${{ parameters.name }}
+
+    - id: publish-github
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: 'github.com/igordevopslabs/${{ parameters.name }}'
+        description: 'Go application that prints "Hello, World!"'
+        access: private # or 'public'
+
+  parameters:
+    - title: Name of the Go project
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the Go project
+          ui:autofocus: true
