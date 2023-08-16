@@ -30,7 +30,7 @@ spec:
       input:
         description: |
           - Adicionando '${{ parameters.name }}' ao Backstage como Component.
-        sourcePath: catalog-info.yaml
+        sourcePath: '/catalog-info.yaml'
         repoUrl: github.com?repo=${{ parameters.name }}&owner=${{ parameters.organization }}
         branchName: feat-catalog-${{ parameters.name }}
         title: "feat: Register ${{ parameters.name }} to Backstage"
