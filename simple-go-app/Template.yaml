@@ -8,22 +8,6 @@ spec:
   owner: go-helloworld
   type: service
 
-  steps:
-    - id: fetch-base
-      name: Fetch base template
-      action: fetch:plain
-      input:
-        url: https://github.com/igordevopslabs/go-app-template.git
-
-    - id: publish-github
-      name: Publish to GitHub
-      action: publish:github
-      input:
-        repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
-        description: 'Go application that prints "Hello, World!"'
-        access: private # or 'private'
-        defaultBranch: main
-
   parameters:
     - title: Data of project
       required:
@@ -44,3 +28,35 @@ spec:
           description: Github organition, default igordevopslabs
           default: igordevopslabs
           ui:autofocus: true
+
+  steps:
+    - id: fetch-base
+      name: Fetch base template
+      action: fetch:plain
+      input:
+        url: https://github.com/igordevopslabs/go-app-template.git
+
+    - id: publish-github
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
+        description: 'Go application that prints "Hello, World!"'
+        access: private # or 'private'
+        defaultBranch: main
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish-github'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+        
+  # some outputs which are saved along with the job for use in the frontend
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['fetch-base'].output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
