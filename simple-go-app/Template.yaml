@@ -14,7 +14,7 @@ spec:
       name: Fetch Template
       action: fetch:template
       input:
-        url: ./template
+        url: ./
         targetPath: catalog-info.yaml
         values:
           name: ${{ parameters.name }}
@@ -33,13 +33,6 @@ spec:
         description: 'Go application that prints "Hello, World!"'
         access: private # or 'private'
         defaultBranch: main
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps['publish-github'].output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
 
   parameters:
     - title: Data of project
