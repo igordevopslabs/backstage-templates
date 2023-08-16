@@ -24,8 +24,19 @@ spec:
         description: 'Go application that prints "Hello, World!"'
         access: private # or 'private'
 
+    - id: publishPr
+      name: Publish
+      action: publish:github:pull-request 
+      input:
+        description: |
+          - Adicionando '${{ parameters.name }}' ao Backstage como Component.
+        sourcePath: catalog-info.yaml
+        repoUrl: github.com?repo=${{ parameters.name }}&owner=${{ parameters.organization }}
+        branchName: feat-catalog-${{ parameters.name }}
+        title: "feat: Register ${{ parameters.name }} to Backstage"
+
   parameters:
-    - title: Name of the Go project
+    - title: Data of project
       required:
         - name
       properties:
@@ -33,6 +44,16 @@ spec:
           title: Name
           type: string
           description: Unique name of the Go project
+          ui:autofocus: true
+    - title: Ownership
+      required:
+        - organization
+      properties:
+        organization:
+          title: organization
+          type: string
+          description: Github organition, default igordevopslabs
+          default: igordevopslabs
           ui:autofocus: true
 
   output:

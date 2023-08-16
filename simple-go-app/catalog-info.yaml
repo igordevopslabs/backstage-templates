@@ -5,5 +5,5 @@ metadata:
   description: A simple Go application
 spec:
   type: service
-  owner: guest
+  owner: igor
   lifecycle: experimental
