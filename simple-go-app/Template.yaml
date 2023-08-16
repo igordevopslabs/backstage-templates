@@ -9,6 +9,16 @@ spec:
   type: service
 
   steps:
+  
+    - id: fetchTemplate
+      name: Fetch Template
+      action: fetch:template
+      input:
+        url: ./template
+        targetPath: catalog-info.yaml
+        values:
+          name: ${{ parameters.name }}
+
     - id: fetch-base
       name: Fetch base template
       action: fetch:plain
@@ -30,7 +40,7 @@ spec:
       input:
         description: |
           - Adicionando '${{ parameters.name }}' ao Backstage como Component.
-        sourcePath: '/catalog-info.yaml'
+        sourcePath: catalog-info.yaml
         repoUrl: github.com?repo=${{ parameters.name }}&owner=${{ parameters.organization }}
         branchName: feat-catalog-${{ parameters.name }}
         title: "feat: Register ${{ parameters.name }} to Backstage"
