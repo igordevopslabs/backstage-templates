@@ -39,7 +39,7 @@ spec:
       name: Log a custom message
       action: debug:log
       input:
-        message: "urlvalue: ${{ steps.publish-github.output.repoContentsUrl }}"
+        message: "urlvalue: ${{ steps['publish-github'].output.repoContentsUrl }}"
 
     - id: register
       name: Register
