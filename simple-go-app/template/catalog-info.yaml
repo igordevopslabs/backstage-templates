@@ -5,8 +5,8 @@ metadata:
   name: ${{ values.name }}
   description: 'Simple go app'
   annotations:
-    github.com/project-slug: ${{ values.organization }}/${{ values.name }}
+    github.com/project-slug: igordevopslabs/${{ values.name }}
 spec:
   type: service
   lifecycle: staging
-  owner: ${{ values.organization }}
+  owner: igordevopslabs
