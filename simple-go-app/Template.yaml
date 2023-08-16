@@ -35,26 +35,13 @@ spec:
         access: private # or 'private'
         defaultBranch: main
 
-    - id: debug
-      name: Log a custom message
-      action: debug:log
-      input:
-        message: "urlvalue: ${{ steps['publish-github'].output.repoContentsUrl }}"
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
-
     - id: publishPr
       name: PR to register catalog-info
       action: publish:github:pull-request 
       input:
         description: |
           - Adicionando '${{ parameters.name }}' ao Backstage como Component.
-        sourcePath: catalog-info.yaml
+        sourcePath: /catalog-info.yaml
         repoUrl: github.com?repo=${{ parameters.name }}&owner=${{ parameters.organization }}
         branchName: feat-catalog-${{ parameters.name }}
         title: "feat: Register ${{ parameters.name }} to Backstage"
