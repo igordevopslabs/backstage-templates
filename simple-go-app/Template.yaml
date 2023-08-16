@@ -9,16 +9,6 @@ spec:
   type: service
 
   steps:
-
-    - id: fetchTemplate
-      name: Fetch Template
-      action: fetch:template
-      input:
-        url: ./
-        targetPath: catalog-info.yaml
-        values:
-          name: ${{ parameters.name }}
-
     - id: fetch-base
       name: Fetch base template
       action: fetch:plain
