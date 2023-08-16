@@ -53,7 +53,7 @@ spec:
         repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
         requireBranchesToBeUpToDate: true
         description: 'Go application that prints "Hello, World!"'
-        access: public # or 'private'
+        access: private # or 'private'
         defaultBranch: main
 
     - id: register
