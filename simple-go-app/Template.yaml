@@ -49,7 +49,9 @@ spec:
       name: Publish to GitHub
       action: publish:github
       input:
+        allowedHosts: ["github.com"]
         repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
+        requireBranchesToBeUpToDate: true
         description: 'Go application that prints "Hello, World!"'
         access: public # or 'private'
         defaultBranch: main
