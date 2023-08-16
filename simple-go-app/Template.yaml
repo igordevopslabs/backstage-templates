@@ -25,7 +25,7 @@ spec:
         access: private # or 'private'
 
     - id: publishPr
-      name: Publish
+      name: PR to register catalog-info
       action: publish:github:pull-request 
       input:
         description: |
