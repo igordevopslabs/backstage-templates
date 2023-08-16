@@ -1,9 +1,0 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: ${{ parameters.name }}
-  description: A simple Go application
-spec:
-  type: service
-  owner: igor
-  lifecycle: experimental
