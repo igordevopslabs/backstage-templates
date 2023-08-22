@@ -15,7 +15,9 @@ spec:
         - description
         - documentation
         - version
+        - owner
         - port
+        - organization
       properties:
         name:
           title: Name
@@ -23,6 +25,22 @@ spec:
           description: Nome da Aplicacao
           ui:field: EntityNamePicker
           ui:autofocus: true
+
+        organization:
+          title: organization
+          type: string
+          description: Github organition, default igordevopslabs
+          default: igordevopslabs
+          ui:autofocus: true
+
+        owner:
+          title: Dono
+          type: string
+          description: Time dono da aplicação que usará o repositório
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
 
         version:
           title: Version
@@ -71,6 +89,8 @@ spec:
           documentation: ${{ parameters.documentation }}
           version: ${{ parameters.version }}
           port: ${{ parameters.port }}
+          organization: ${{ parameters.organization }}
+          owner: ${{ parameters.owner }}
 
     - id: publish-github
       name: Publish to GitHub

@@ -1,0 +1,30 @@
+name: Security Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: security-checks-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  secret-scanning:
+    uses: igordevopslabs/custom-workflows-actions/.github/workflows/gitleaks-scan.yml@main
+    secrets: inherit
+
+  security-fs:
+    uses: igordevopslabs/custom-workflows-actions/.github/workflows/trivy-fs-scan.yml@main
+    secrets: inherit
+
+  scan-image:
+    uses: igordevopslabs/custom-workflows-actions/.github/workflows/container_scan2.yml@main
+    with:
+      app_name: ${{ github.event.repository.name }}
+      app_path: 'cmd/api'
+    secrets: inherit
