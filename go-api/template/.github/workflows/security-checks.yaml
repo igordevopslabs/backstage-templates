@@ -25,6 +25,6 @@ jobs:
   scan-image:
     uses: igordevopslabs/custom-workflows-actions/.github/workflows/container_scan2.yml@main
     with:
-      app_name: ${{ github.event.repository.name }}
-      app_path: 'app/service'
+      app_name: ${{ values.name }}
+      app_path: 'app/service/main.go'
     secrets: inherit
