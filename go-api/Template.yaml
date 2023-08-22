@@ -1,0 +1,95 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Runtime-API
+  title: "[DevopsLabs] Runtime Golang APIs Template"
+  tags:
+    - 
+  description: |
+    Template para adição de APIs Go no projeto runtime da igordevopslabs
+spec:
+  owner: backstage/techdocs-core
+  type: service
+
+  parameters:
+    - title: Dados da Aplicacao
+      required:
+        - name
+        - description
+        - documentation
+        - version
+        - port
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Nome da Aplicacao
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+
+        version:
+          title: Version
+          type: string
+          description: Qual versão Go da sua aplicação
+          enum:
+            - '1.17 (legacy)'
+            - '1.18'
+            - '1.19'
+            - '1.20'
+            - '1.21'
+          enumNames:
+            - '1.17 (legacy)'
+            - '1.18'
+            - '1.19'
+            - '1.20'
+            - '1.21'
+
+        documentation:
+          title: Documentação
+          type: string
+          description: Link da Documentação do projeto
+
+        description:
+          title: Description
+          type: string
+          description: Descricao da aplicacao
+
+        port:
+          title: port
+          type: string
+          description: porta da Aplicacao
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+
+  steps:
+    - id: fetch-base
+      name: Renderizando template api
+      action: fetch:template
+      input:
+        url: ./template
+        targetPath: ./
+        values:
+          name: ${{ parameters.name | replace(' ', '-')}}
+          description: ${{ parameters.description }}
+          documentation: ${{ parameters.documentation }}
+          version: ${{ parameters.version }}
+          port: ${{ parameters.port }}
+
+    - id: publish-github
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ["github.com"]
+        repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.name }}
+        requireBranchesToBeUpToDate: true
+        description: ${{ parameters.description }}
+        access: private # or 'private'
+        defaultBranch: main
+
+    - id: register
+      name: Inserindo no inventário de serviços
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+ 
