@@ -15,4 +15,4 @@ resources: {}
 
 service:
   type: ClusterIP
-  port: 8080
+  port: ${{ values.port }}
