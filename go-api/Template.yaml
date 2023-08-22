@@ -1,14 +1,11 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: Runtime-API
-  title: "[DevopsLabs] Runtime Golang APIs Template"
-  tags:
-    - 
-  description: |
-    Template para adição de APIs Go no projeto runtime da igordevopslabs
+  name: go-guideline-api
+  title: Go API basede in guideline Template
+  description: Creates a Go application from Guideline Go
 spec:
-  owner: backstage/techdocs-core
+  owner: go-api
   type: service
 
   parameters:
