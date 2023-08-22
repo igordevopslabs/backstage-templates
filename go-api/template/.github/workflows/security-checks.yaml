@@ -26,5 +26,5 @@ jobs:
     uses: igordevopslabs/custom-workflows-actions/.github/workflows/container_scan2.yml@main
     with:
       app_name: ${{ github.event.repository.name }}
-      app_path: 'cmd/api'
+      app_path: 'app/service'
     secrets: inherit
