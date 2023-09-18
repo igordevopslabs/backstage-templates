@@ -93,11 +93,11 @@ spec:
 
 # --------------------------------------------------------------------------------------------------------
 
-    - title: Linguagem da Aplicação
+    - title: Modelos e Estruturas da Aplicação
       required: [typeApp, languageApp, versionApp]
       properties:
         typeApp:
-          title: Tipo de linguagem?
+          title: Modelo da aplicação?
           type: string
           enum: [front-end,back-end]
           ui:widget: radio
@@ -110,14 +110,14 @@ spec:
                 languageApp:
                   title: Linguagem
                   type: string
-                  enum: [css,javascript,angular,react,typescript]
-                  enumNames: [CSS,JavaScript,Angular,React,TypeScript]
+                  enum: [javascript,angular,react,typescript]
+                  enumNames: [JavaScript,Angular,React,TypeScript]
               dependencies:
                 languageApp:
                   oneOf:
                     - properties:
                         languageApp:
-                          enum: [css,javascript]
+                          enum: [javascript]
                         versionApp:
                           title: Versão do Nginx
                           description: Imagem base para construir a sua aplicação
@@ -216,8 +216,8 @@ spec:
                       type: array
                       items:
                         type: string
-                        enum: [stg,sdx,prd]
-                        enumNames: [Staging,Sandbox,Production]
+                        enum: [stg,homolog,sdx,prd]
+                        enumNames: [Staging,Homolog,Sandbox,Production]
                       uniqueItems: true
                       ui:widget: checkboxes
                       ui:help: 'Local onde a aplicação será criada no cluster K8S'
