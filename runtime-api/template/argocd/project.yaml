@@ -1,0 +1,162 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  {% if values.context == 'payments' -%}
+  name: pay-${{ values.name }}
+  {%- elseif values.context == 'foundation-platform' -%}
+  name: fp-${{ values.name }}
+  {%- elseif values.context == 'data-platform' -%}
+  name: dpl-${{ values.name }}
+  {%- elseif values.context == 'customer-platforms' -%}
+  name: cpl-${{ values.name }}
+  {%- elseif values.context == 'credit' -%}
+  name: crt-${{ values.name }}
+  {%- elseif values.context == 'finance-controllership' -%}
+  name: fcl-${{ values.name }}
+  {%- elseif values.context == 'finance-treasury' -%}
+  name: ftr-${{ values.name }}
+  {%- elseif values.context == 'payments-finance' -%}
+  name: payf-${{ values.name }}
+  {%- endif %}
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: ${{ values.description }}
+  sourceRepos:
+  - 'https://${{ values.repoHost }}/${{ values.repoOwner }}/${{ values.repoName }}'
+  - 697525377503.dkr.ecr.us-east-1.amazonaws.com
+  destinations:
+  {% if values.context == 'payments' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-stg
+  - namespace: app-${{ values.name }}
+    name: runtime-sdx
+  - namespace: app-${{ values.name }}
+    name: runtime-prd
+  {%- elseif values.context == 'foundation-platform' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-tools-stg
+  - namespace: app-${{ values.name }}
+    name: runtime-tools-prd
+  {%- elseif values.context == 'data-platform' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-data-platform-stg
+  - namespace: app-${{ values.name }}
+    name: runtime-data-platform-prd
+  {%- elseif values.context == 'customer-platforms' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-customer-platforms-stg
+  - namespace: app-${{ values.name }}
+    name: runtime-customer-platforms-prd
+  {%- elseif values.context == 'credit' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-credit-eastus2-stg
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-credit-eastus2-prd
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-credit-centralus-prd
+  {%- elseif values.context == 'finance-controllership' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-ctr-nonprod
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-ctr-dr
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-ctr-prod
+  {%- elseif values.context == 'finance-treasury' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-trs-nonprod
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-trs-dr
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-trs-prod
+  {%- elseif values.context == 'payments-finance' -%}
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-pro-ins-nonprod
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-pro-ins-dr
+  - namespace: app-${{ values.name }}
+    name: runtime-aks-pro-ins-prod
+  {%- endif %}
+
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+
+  namespaceResourceBlacklist:
+
+  namespaceResourceWhitelist:
+    - group: ''
+      kind: ConfigMap
+    - group: argoproj.io
+      kind: Rollout
+    - group: ''
+      kind: Service
+    - group: networking.k8s.io
+      kind: Ingress
+    - group: ''
+      kind: ServiceAccount
+    - group: ''
+      kind: Pod
+    - group: apps
+      kind: ReplicaSet
+    - group: ''
+      kind: Secret
+    - group: ''
+      kind: Endpoints
+    - group: ''
+      kind: NetworkPolicy
+    - group: keda.sh
+      kind: TriggerAuthentication
+    - group: keda.sh
+      kind: ScaledObject
+    - group: external-secrets.io
+      kind: ExternalSecret
+    - group: policy
+      kind: PodDisruptionBudget
+
+  orphanedResources:
+    warn: false
+
+  roles:
+    {% if values.context == 'payments' -%}
+    - name: pay-${{ values. name }}
+      description: Sync privileges for pay-${{ values.name }}
+      policies:
+      - p, proj:pay-${{ values.name }}:pay-${{ values.name }}, applications, *, pay-${{ values.name }}/*, allow
+    {%- elseif values.context == 'foundation-platform' -%}
+    - name: fp-${{ values. name }}
+      description: Sync privileges for fp-${{ values.name }}
+      policies:
+      - p, proj:fp-${{ values.name }}:fp-${{ values.name }}, applications, *, fp-${{ values.name }}/*, allow
+    {%- elseif values.context == 'data-platform' -%}
+    - name: dpl-${{ values. name }}
+      description: Sync privileges for dpl-${{ values.name }}
+      policies:
+      - p, proj:dpl-${{ values.name }}:dpl-${{ values.name }}, applications, *, dpl-${{ values.name }}/*, allow
+    {%- elseif values.context == 'customer-platforms' -%}
+    - name: cpl-${{ values. name }}
+      description: Sync privileges for cpl-${{ values.name }}
+      policies:
+      - p, proj:cpl-${{ values.name }}:cpl-${{ values.name }}, applications, *, cpl-${{ values.name }}/*, allow
+    {%- elseif values.context == 'credit' -%}
+    - name: crt-${{ values. name }}
+      description: Sync privileges for crt-${{ values.name }}
+      policies:
+      - p, proj:crt-${{ values.name }}:crt-${{ values.name }}, applications, *, crt-${{ values.name }}/*, allow
+    {%- elseif values.context == 'finance-controllership' -%}
+    - name: fcl-${{ values. name }}
+      description: Sync privileges for fcl-${{ values.name }}
+      policies:
+      - p, proj:fcl-${{ values.name }}:fcl-${{ values.name }}, applications, *, fcl-${{ values.name }}/*, allow
+    {%- elseif values.context == 'finance-treasury' -%}
+    - name: ftr-${{ values. name }}
+      description: Sync privileges for ftr-${{ values.name }}
+      policies:
+      - p, proj:ftr-${{ values.name }}:ftr-${{ values.name }}, applications, *, ftr-${{ values.name }}/*, allow
+    {%- elseif values.context == 'payments-finance' -%}
+    - name: payf-${{ values. name }}
+      description: Sync privileges for payf-${{ values.name }}
+      policies:
+      - p, proj:payf-${{ values.name }}:payf-${{ values.name }}, applications, *, payf-${{ values.name }}/*, allow
+    {%- endif %}

@@ -1,0 +1,48 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: '${{ values.name }}'
+  namespace: ${{ values.context }}
+  description: '${{ values.description }}'
+  tags:
+    - ${{ values.team }}
+    - ${{ values.context }}
+  links:
+    - url: '${{ values.documentation }}'
+      title: 'Documentação do Projeto'
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  {% if values.typeApp == 'back-end' -%}
+  type: backend
+  {%- elseif values.typeApp == 'front-end' -%}
+  type: frontend
+  {%- endif %}
+  lifecycle: experimental
+  owner: ${{ values.github }}
+  providesApis:
+    - ${{ values.name }}-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: '${{ values.name }}-api'
+  namespace: ${{ values.context }}
+  description: '${{ values.description }}'
+  tags:
+    - ${{ values.languageApp }}
+    - ${{ values.typeApp }}
+  links:
+    - url: 'https://${{ values.repoHost }}/${{ values.repoOwner }}/${{ values.repoName }}'
+      title: 'Repositório da API'
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: ${{ values.github }}
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: ${{ values.name }}-api
+      license:
+        name: MIT

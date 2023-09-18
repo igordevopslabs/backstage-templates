@@ -8,3 +8,4 @@ spec:
     - ./hello-world/Template.yaml
     - ./simple-go-app/Template.yaml
     - ./go-api/Template.yaml
+    - ./runtime-api/template.yaml

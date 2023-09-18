@@ -1,0 +1,242 @@
+platform-k8s-api-chart:
+  {% if values.env == 'stg' -%}
+  replicaCount: 1
+  {%- elseif values.env != 'stg' -%}
+  replicaCount: 3
+  {%- endif %}
+
+  image:
+    {% if values.context == 'payments' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/pay-${{ values.name }}"
+    {%- elseif values.context == 'foundation-platform' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/fp-${{ values.name }}"
+    {%- elseif values.context == 'data-platform' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/dpl-${{ values.name }}"
+    {%- elseif values.context == 'customer-platforms' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/cpl-${{ values.name }}"
+    {%- elseif values.context == 'credit' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/crt-${{ values.name }}"
+    {%- elseif values.context == 'finance-controllership' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/fcl-${{ values.name }}"
+    {%- elseif values.context == 'finance-treasury' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/ftr-${{ values.name }}"
+    {%- elseif values.context == 'payments-finance' -%}
+    repository: "697525377503.dkr.ecr.us-east-1.amazonaws.com/payf-${{ values.name }}"
+    {%- endif %}
+    pullPolicy: IfNotPresent
+    tag: ""
+
+  containerPort: ${{ values.resources.portApp }}
+
+  labels:
+    cost-center: "${{ values.cost }}"
+    project: "${{ values.name }}"
+    owner: "${{ values.team }}"
+    group-slack: "${{ values.slack }}"
+    support: "foundation-platform-cloud"
+    github-org: "${{ values.repoOwner }}"
+    github-repo: "${{ values.repoName }}"
+    {% if values.env == 'stg' -%}
+    env: "staging"
+    {%- elseif values.env == 'prd' -%}
+    env: "production"
+    {%- elseif values.env == 'sdx' -%}
+    env: "sandbox"
+    {%- elseif values.env == 'dr' -%}
+    env: "production"
+    {%- endif %}
+
+  annotations:
+    documentation: "${{ values.documentation }}"
+
+  application:
+    name: "${{ values.name }}"
+    language: "${{ values.languageApp }}"
+    {% if values.env == 'stg' -%}
+    environment: "staging"
+    {%- elseif values.env == 'prd' -%}
+    environment: "production"
+    {%- elseif values.env == 'sdx' -%}
+    environment: "sandbox"
+    {%- elseif values.env == 'dr' -%}
+    environment: "production-dr"
+    {%- endif %}
+
+  cloudProviders:
+    {% if values.provider == 'aws' -%}
+    aws:
+      enabled: true
+      karpenter:
+        enabled: true
+        capacityType: "spot" # available values (spot, on-demand)
+        {% if values.context == 'payments' -%}
+        selector: payments
+        {%- elseif values.context == 'foundation-platform' -%}
+        selector: foundation
+        {%- elseif values.context == 'data-platform' -%}
+        selector: data
+        {%- elseif values.context == 'customer-platforms' -%}
+        selector: customer-platforms
+        {%- endif %}
+      #https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/irsa_integration.md
+      roleArn:
+    {%- elseif values.provider == 'azure' -%}
+    azure:
+      enabled: true
+      #https://azure.github.io/azure-workload-identity/docs/topics/service-account-labels-and-annotations.html#service-account
+      workloadIdentity:
+        clientId:
+        tenantId:
+        serviceAccountTokenExpiration:
+      imagePullSecrets:
+        name: foundation-ecr-secret
+    {%- endif %}
+
+  {% if values.optionVariables == 'Sim' -%}
+  envs:
+    {% for vars in values.variables_multiline -%}
+    ${{ vars.nameVariables }}: "${{ vars.valueVariables }}"
+    {% endfor %}
+  {%- endif %}
+
+  {% if values.optionSecrets == 'Sim' -%}
+  secrets:
+    envVarEnabled: true
+    keys:
+      {% for secret in values.secrets_multiline -%}
+      - ${{ secret.nameSecrets }}
+      {% endfor %}
+  {%- endif %}
+
+  resources:
+    memory: "${{ values.resources.memoryApp }}"
+    cpu: "${{ values.resources.cpuApp }}"
+
+  autoscaling:
+    enabled: true
+    {% if values.env == 'stg' -%}
+    maxReplicas: 3
+    {%- elseif values.env != 'stg' -%}
+    maxReplicas: 10
+    {%- endif %}
+    cpu:
+      target: 80
+      metricType: Utilization
+    memory:
+      target: 80
+      metricType: Utilization
+
+  {% if values.accessApp == 'internamente' -%}
+  ingress:
+    enabled: true
+    hosts:
+      {% if values.provider == 'aws' -%}
+      {% if values.context == 'payments' -%}
+      - host: ${{ values.name }}.platform-k8s-${{ values.env }}.aws.pagarme.run
+      {%- elseif values.context == 'foundation-platform' -%}
+      {% if values.env == 'stg' -%}
+      - host: ${{ values.name }}.tools-stg.aws.pagarme.run
+      {%- elseif values.env != 'stg' -%}
+      - host: ${{ values.name }}.tools-prd.aws.pagarme.run
+      {%- endif %}
+      {%- elseif values.context == 'data-platform' -%}
+      {% if values.env == 'stg' -%}
+      - host: ${{ values.name }}.platform-k8s-data-platform-stg.aws.pagarme.run
+      {%- elseif values.env != 'stg' -%}
+      - host: ${{ values.name }}.platform-k8s-data-platform-prd.aws.pagarme.run
+      {%- endif %}
+      {%- elseif values.context == 'customer-platforms' -%}
+      {% if values.env == 'stg' -%}
+      - host: ${{ values.name }}.customer-platforms-stg.aws.pagarme.run
+      {%- elseif values.env != 'stg' -%}
+      - host: ${{ values.name }}.customer-platforms-prd.aws.pagarme.run
+      {%- endif %}
+      {%- endif %}
+      {%- elseif values.provider == 'azure' -%}
+      - host: ${{ values.name }}.apps.stone.com.br
+      {%- endif %}
+        paths:
+        - path: /
+  {%- endif %}
+
+  {% if values.accessApp == 'externamente' and values.provider == 'azure' -%}
+  ingressExternal:
+    enabled: true
+    class: ingress-nginx-external
+    hosts:
+      - host: ${{ values.name }}.stone.com.br
+        paths:
+        - path: /
+  {%- endif %}
+
+  {% if values.optionHealth == 'Sim' -%}
+  healthcheck:
+    {% for vl in values.health_liveness -%}
+    livenessProbe:
+      enabled: true
+      path: ${{ vl.livenessPath }}
+      failureThreshold: ${{ vl.livenessFt }}
+      periodSeconds: ${{ vl.livenessPs }}
+      initialDelaySeconds: ${{ vl.livenessDs }}
+      timeoutSeconds: ${{ vl.livenessTs }}
+    {% endfor -%}
+    {%- for vr in values.health_readiness %}
+    readinessProbe:
+      enabled: true
+      path: ${{ vr.readinessPath }}
+      failureThreshold: ${{ vr.readinessFt }}
+      periodSeconds: ${{ vr.readinessPs }}
+      initialDelaySeconds: ${{ vr.readinessDs }}
+      timeoutSeconds: ${{ vr.readinessTs }}
+    {% endfor -%}
+  {%- endif %}
+
+  {% if values.optionCanary == 'Sim' -%}
+  steps:
+    {% for rollout in values.deployCanary -%}
+    - setWeight: ${{ rollout.setWeightOne }}
+    - pause: "{duration: ${{ rollout.pauseOne }}m}"
+    - setWeight: ${{ rollout.setWeightTwo }}
+    - pause: "{duration: ${{ rollout.pauseTwo }}m}"
+    - setWeight: ${{ rollout.setWeightThree }}
+    - pause: "{duration: ${{ rollout.pauseThree }}m}"
+    {% endfor -%}
+  {%- endif %}
+
+  {% if values.optionSidecars == 'Sim' -%}
+  sidecars:
+    enabled: true
+    {% for side in values.sidecars_multiline -%}
+    - name: ${{ side.nameSidecars }}
+      command: ${{ side.commandSidecars }}
+      args:
+        {% for arg in side.argsSidecars.split('\n') -%}
+        - ${{ arg }}
+        {% endfor -%}
+      secrets: []
+      envs: {}
+      containerPort: ${{ side.portSidecars }}
+      resources:
+        memory: "${{ side.memorySidecars }}"
+        cpu: "${{ side.cpuSidecars }}"
+      image: ${{ side.imageSidecars }}
+    {% endfor -%}
+  {%- endif %}
+
+  {% if values.optionNps == 'Sim' -%}
+  networkpolicy:
+    enabled: true
+    egress:
+      {%- for np in values.nps_multiline %}
+      - name: ${{ np.nameNps }}
+        portscidrs:
+        - ports:
+          {% for port in np.portNps.split('\n') -%}
+          - ${{ port }}
+          {% endfor %}
+        - cidrs:
+          {% for cidr in np.cidrNps.split('\n') -%}
+          - ${{ cidr }}
+          {% endfor -%}
+      {%- endfor -%}
+  {%- endif %}

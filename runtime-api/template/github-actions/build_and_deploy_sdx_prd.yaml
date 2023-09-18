@@ -1,0 +1,80 @@
+name: build and push ${{ values.name }}
+on:
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "chart/**"
+
+jobs:
+  build:
+    uses: stone-payments/platform-k8s-github-actions/.github/workflows/build_and_push.yml@main
+    with:
+      PROVIDER: "aws"
+      {%- if values.provider == 'azure' -%}
+      ENVIRONMENT: "dr"
+      {%- elseif values.provider == 'aws' -%}
+      ENVIRONMENT: "sdx"
+      {%- endif %}
+      {% if values.context == 'payments' -%}
+      REGISTRY_NAME: "pay-${{ values.name }}"
+      {%- elseif values.context == 'foundation-platform' -%}
+      REGISTRY_NAME: "fp-${{ values.name }}"
+      {%- elseif values.context == 'data-platform' -%}
+      REGISTRY_NAME: "dpl-${{ values.name }}"
+      {%- elseif values.context == 'customer-platforms' -%}
+      REGISTRY_NAME: "cpl-${{ values.name }}"
+      {%- elseif values.context == 'credit' -%}
+      REGISTRY_NAME: "crt-${{ values.name }}"
+      {%- elseif values.context == 'finance-controllership' -%}
+      REGISTRY_NAME: "fcl-${{ values.name }}"
+      {%- elseif values.context == 'finance-treasury' -%}
+      REGISTRY_NAME: "ftr-${{ values.name }}"
+      {%- elseif values.context == 'payments-finance' -%}
+      REGISTRY_NAME: "payf-${{ values.name }}"
+      {%- endif %}
+      RUNS_ON: "small-runner"
+    secrets:
+      {% if values.repoOwner == 'stone-payments' -%}
+      AWS_REGION: ${{ secrets.AWS_FOUNDATION_REGION }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_FOUNDATION_ECR_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_FOUNDATION_ECR_ACCESS_KEY_ID }}
+      {%- elseif values.repoOwner == 'pagarme' -%}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ECR_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ECR_ACCESS_KEY_ID }}
+      {%- endif %}
+
+  {%- if 'sdx' in values.envs -%}
+  deploy_sdx:
+    needs: [build]
+    uses: stone-payments/platform-k8s-github-actions/.github/workflows/deploy_argocd.yml@main
+    with:
+      ENVIRONMENT: "sdx"
+      RUNS_ON: "small-runner"
+    secrets: inherit
+  {%- elseif 'dr' in values.envs -%}
+  deploy_dr:
+    needs: [build]
+    uses: stone-payments/platform-k8s-github-actions/.github/workflows/deploy_argocd.yml@main
+    with:
+      ENVIRONMENT: "dr"
+      RUNS_ON: "small-runner"
+    secrets: inherit
+  {%- endif %}
+
+  {% if 'prd' in values.envs -%}
+  deploy_prd:
+    {% if 'sdx' in values.envs -%}
+    needs: [deploy_sdx]
+    {%- elseif 'dr' in values.envs -%}
+    needs: [deploy_dr]
+    {%- else -%}
+    needs: [build]
+    {%- endif %}
+    uses: stone-payments/platform-k8s-github-actions/.github/workflows/deploy_argocd.yml@main
+    with:
+      ENVIRONMENT: "prd"
+      RUNS_ON: "small-runner"
+    secrets: inherit
+  {%- endif %}

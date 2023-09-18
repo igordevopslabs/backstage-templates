@@ -1,0 +1,10 @@
+apiVersion: v2
+name: ${{ values.name }}
+description: A Helm chart for Kubernetes
+type: application
+version: 1
+appVersion: "1.16.0"
+dependencies:
+- name: platform-k8s-api-chart
+  version: 0.3.4
+  repository: oci://697525377503.dkr.ecr.us-east-1.amazonaws.com
