@@ -17,34 +17,36 @@ spec:
         name:
           title: Nome
           type: string
-          description: Nome da Aplicação
-          maxLength: 20
+          description: 'Nome da Aplicação. Ex: my-awesome-app'
+          maxLength: 30
           pattern: '^([a-z-]+)$'
           ui:field: EntityNamePicker
           ui:autofocus: true
-          ui:help: 'Nota: Máximo 20 caracteres, somente letras minusculas'
+          ui:help: 'Nota: Máximo 30 caracteres, somente letras minusculas separadas por traços'
 
         description:
           title: Descrição
           type: string
           description: Descrição da Aplicação
-          maxLength: 60
+          maxLength: 255
           pattern: '(?<!\.\s)[A-Za-z]+'
-          ui:help: 'Nota: Máximo 60 caracteres'
+          ui:help: 'Nota: Máximo 255 caracteres'
 
         context:
           title: Contexto
           type: string
           description: Contexto a qual sua aplicação pertence
           enum:
-            - payments
-            - foundation-platform
-            - data-platform
-            - customer-platforms
-            - finance-controllership
-            - finance-treasury
-            - payments-finance
-            - credit
+            - operation
+            - costumer
+            - segment-teams
+            - interaction
+            - lifecycle
+            - product
+            - financial-services
+            - local-fs-schemes
+            - defense-and-audit
+            - engineering
 
         cost:
           title: Centro de Custo
