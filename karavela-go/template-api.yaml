@@ -41,6 +41,3 @@ spec:
           description: "{{ parameters.description }}"
           goVersion: "{{ parameters.goVersion }}"
           port: "{{ parameters.port }}"
-
-  output:
-    - url: "{{ steps.fetch-base.output.targetDir }}/README.md"
