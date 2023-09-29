@@ -90,7 +90,6 @@ spec:
     - id: publish-github
       name: Publish to GitHub
       action: publish:github
-      if: "${{ parameters.optionAppType === 'API' }}"
       input:
         allowedHosts: ["github.com"]
         repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.apiName }}
@@ -102,7 +101,6 @@ spec:
     - id: register
       name: Inserindo no inventário de serviços
       action: catalog:register
-      if: "${{ parameters.optionAppType === 'API' }}"
       input:
         repoContentsUrl: ${{ steps['publish-github'].output.repoContentsUrl }}
         catalogInfoPath: '/catalog-info.yaml'
