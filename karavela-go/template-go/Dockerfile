@@ -26,7 +26,7 @@ COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 
 WORKDIR /app
-COPY --from=builder /app/scapegoat /app
+COPY --from=builder /app/${{ values.apiName | lower }} /app
 
 #avoid rootless
 USER appuser:appuser
