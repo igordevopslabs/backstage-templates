@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	defaultPort    = "${{ values.port | lower }}"
+	defaultPort = "${{ values.port | lower }}"
 )
 
 type fixedResponse string
@@ -23,4 +23,12 @@ func main() {
 
 	log.Printf("listening on %s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, nil))
+}
+
+func getEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return defaultValue
+	}
+	return value
 }
