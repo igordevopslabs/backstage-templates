@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	defaultPort    = "{{ values.port | lower }}"
-	defaultEnvName = "{{ values.apiEnv | lower }}"
+	defaultPort    = "${{ values.port | lower }}"
+	defaultEnvName = "${{ values.apiEnv | lower }}"
 )
 
 type fixedResponse string
@@ -17,7 +17,7 @@ type fixedResponse string
 func (s fixedResponse) ServeHTTP(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, s) }
 
 func main() {
-	http.Handle("/healthcheck", fixedResponse("~> {{ values.apiName | lower }} is healthy..."))
+	http.Handle("/healthcheck", fixedResponse("~> ${{ values.apiName | lower }} is healthy..."))
 	http.Handle("/", fixedResponse(fmt.Sprintf("It's live!! env: %s\n", getEnv("ENV_NAME", defaultEnvName))))
 
 	addr := fmt.Sprintf(":%s", getEnv("PORT", defaultPort))

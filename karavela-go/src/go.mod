@@ -1,6 +1,6 @@
-module {{ values.apiName | lower }}
+module ${{ values.apiName | lower }}
 
-go {{ values.goVersion | lower }}
+go ${{ values.goVersion | lower }}
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

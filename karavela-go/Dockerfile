@@ -1,4 +1,4 @@
-FROM golang:{{ values.goVersion | lower }} as builder
+FROM golang:${{ values.goVersion | lower }} as builder
 
 #avoid root
 ENV USER=appuser 
@@ -19,7 +19,7 @@ COPY /src/ /app
 
 RUN CGO_ENABLED=1 GO111MODULES=on go build -ldflags="-s -w" .
 
-FROM golang:{{ values.goVersion | lower }}
+FROM golang:${{ values.goVersion | lower }}
 
 #avoid rootless
 COPY --from=builder /etc/passwd /etc/passwd
@@ -31,4 +31,4 @@ COPY --from=builder /app/scapegoat /app
 #avoid rootless
 USER appuser:appuser
 
-ENTRYPOINT ["/app/{{ values.apiName | lower }}"]
+ENTRYPOINT ["/app/${{ values.apiName | lower }}"]
