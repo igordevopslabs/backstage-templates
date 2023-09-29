@@ -28,7 +28,7 @@ spec:
           title: Versão Go 
           type: string
           description: versão da sua app (por exemplo, 1.20).
-          enum: ["1.18", "1.19", "1.20", "1.21", "1.22"]
+          enum: ["1.18", "1.19", "1.20", "1.21"]
     
     - title: Características da Aplicação
       required: [typeApp, FrameworkApp]
