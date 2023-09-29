@@ -1,0 +1,6 @@
+version: '3'
+services:
+  ${{ values.apiName | lower }}:
+    build: .
+    ports:
+      - "${{ values.port | lower }}:${{ values.port | lower }}"

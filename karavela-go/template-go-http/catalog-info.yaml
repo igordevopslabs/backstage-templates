@@ -1,0 +1,12 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.apiName }}
+  description: ${{ values.description }}
+  annotations:
+    github.com/project-slug: igordevopslabs/${{ values.apiName }}
+spec:
+  type: service
+  lifecycle: staging
+  owner: igordevopslabs

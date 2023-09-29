@@ -9,33 +9,49 @@ spec:
   type: service
 
   parameters:
-    - title: Configurações da API
+    - title: Configurações da Aapp
       properties:
         apiName:
-          title: Nome da API
+          title: Nome da App
           type: string
-          description: O nome da sua API (por exemplo, minha-api).
+          description: O nome da sua app (por exemplo, minha-api).
         description:
           title: Descrição
           type: string
-          description: Uma descrição curta da sua API.
+          description: Uma descrição curta da sua app.
         port:
           title: Porta
           type: string
           description: A porta na qual o servidor HTTP irá rodar.
           enum: ["3000", "4000", "5000", "6000", "7000", "8000", "9000"]
         goVersion:
-          title: Versão Go da API
+          title: Versão Go 
           type: string
-          description: O nome da sua API (por exemplo, minha-api).
+          description: versão da sua app (por exemplo, 1.20).
           enum: ["1.18", "1.19", "1.20", "1.21", "1.22"]
-
+    
+    - title: Tipo de aplicação Go
+      required: [optionAppType,repoUrl]
+      properties:
+        optionAppType:
+          title: Qual tipo da sua aplicação?
+          type: string
+          enum: [API,Worker,Logger]
+          description: Tipo/Função da aplicação
+          ui:widget: radio
+      dependencies:
+        optionAppType:
+          oneOf:
+            - properties:
+                optionAppType:
+                  enum: [API,Worker,Logger]
   steps:
     - id: fetch-base
       name: Fetch Base
       action: fetch:template
+      if: "${{ parameters.optionAppType === 'API' }}"
       input:
-        url: ./template-go
+        url: ./template-go-http
         values:
           apiName: "${{ parameters.apiName }}"
           description: "${{ parameters.description }}"
@@ -45,6 +61,7 @@ spec:
     - id: publish-github
       name: Publish to GitHub
       action: publish:github
+      if: "${{ parameters.optionAppType === 'API' }}"
       input:
         allowedHosts: ["github.com"]
         repoUrl: github.com?owner=igordevopslabs&repo=${{ parameters.apiName }}
@@ -56,6 +73,7 @@ spec:
     - id: register
       name: Inserindo no inventário de serviços
       action: catalog:register
+      if: "${{ parameters.optionAppType === 'API' }}"
       input:
         repoContentsUrl: ${{ steps['publish-github'].output.repoContentsUrl }}
         catalogInfoPath: '/catalog-info.yaml'
