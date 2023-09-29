@@ -30,28 +30,57 @@ spec:
           description: versão da sua app (por exemplo, 1.20).
           enum: ["1.18", "1.19", "1.20", "1.21", "1.22"]
     
-    - title: Tipo de aplicação Go
-      required: [optionAppType,repoUrl]
+    - title: Características da Aplicação
+      required: [typeApp, FrameworkApp]
       properties:
-        optionAppType:
-          title: Qual tipo da sua aplicação?
+        typeApp:
+          title: Característica da Aplicação
           type: string
-          enum: [API,Worker,Logger]
-          description: Tipo/Função da aplicação
+          enum: [API,Worker]
           ui:widget: radio
       dependencies:
-        optionAppType:
+        typeApp:
           oneOf:
             - properties:
-                optionAppType:
-                  enum: [API,Worker,Logger]
+                typeApp:
+                  enum: [API]
+                FrameworkApp:
+                  title: Framework
+                  type: string
+                  enum: [gin,chi,http]
+                  enumNames: [gin,chi,http]
+
   steps:
     - id: fetch-base
       name: Fetch Base
       action: fetch:template
-      if: "${{ parameters.optionAppType === 'API' }}"
+      if: "${{ parameters.FrameworkApp === 'http' }}"
       input:
         url: ./template-go-http
+        values:
+          apiName: "${{ parameters.apiName }}"
+          description: "${{ parameters.description }}"
+          goVersion: "${{ parameters.goVersion }}"
+          port: "${{ parameters.port }}"
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      if: "${{ parameters.FrameworkApp === 'chi' }}"
+      input:
+        url: ./template-go-chi
+        values:
+          apiName: "${{ parameters.apiName }}"
+          description: "${{ parameters.description }}"
+          goVersion: "${{ parameters.goVersion }}"
+          port: "${{ parameters.port }}"
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      if: "${{ parameters.FrameworkApp === 'gin' }}"
+      input:
+        url: ./template-go-gin
         values:
           apiName: "${{ parameters.apiName }}"
           description: "${{ parameters.description }}"
