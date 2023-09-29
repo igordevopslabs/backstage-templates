@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: go-api-template
-  title: Template para API Go
+  title: "Template para API Go"
   description: Crie uma nova API Go com uma rota de healthcheck e configuração Docker.
 spec:
   owner: time-de-fundacao
