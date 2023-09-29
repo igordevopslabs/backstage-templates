@@ -1,0 +1,46 @@
+apiVersion: backstage.io/v1alpha1
+kind: Template
+metadata:
+  name: go-api-template
+  title: Template para API Go
+  description: Crie uma nova API Go com uma rota de healthcheck e configuração Docker.
+spec:
+  owner: time-de-fundacao
+  type: service
+
+  parameters:
+    - title: Configurações da API
+      properties:
+        apiName:
+          title: Nome da API
+          type: string
+          description: O nome da sua API (por exemplo, minha-api).
+        description:
+          title: Descrição
+          type: string
+          description: Uma descrição curta da sua API.
+        port:
+          title: Porta
+          type: string
+          description: A porta na qual o servidor HTTP irá rodar.
+          enum: ["3000", "4000", "5000", "6000", "7000", "8000", "9000"]
+        goVersion:
+          title: Versão Go da API
+          type: string
+          description: O nome da sua API (por exemplo, minha-api).
+          enum: ["1.18", "1.19", "1.20", "1.21", "1.22"]
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./src
+        values:
+          apiName: "{{ parameters.apiName }}"
+          description: "{{ parameters.description }}"
+          goVersion: "{{ parameters.goVersion }}"
+          port: "{{ parameters.port }}"
+
+  output:
+    - url: "{{ steps.fetch-base.output.targetDir }}/README.md"
