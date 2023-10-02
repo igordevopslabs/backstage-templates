@@ -1,34 +1,54 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"os"
+	"time"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/sirupsen/logrus"
 )
 
-const (
-	defaultPort = "${{ values.port | lower }}"
-)
-
-type fixedResponse string
-
-func (s fixedResponse) ServeHTTP(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, s) }
-
-func main() {
-	http.Handle("/healthcheck", fixedResponse("~> ${{ values.apiName | lower }} is healthy..."))
-	http.Handle("/", fixedResponse(fmt.Sprintf("It's live!! ")))
-
-	addr := fmt.Sprintf(":%s", getEnv("PORT", defaultPort))
-
-	log.Printf("listening on %s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, nil))
+type responseWriter struct {
+	http.ResponseWriter
+	statusCode int
 }
 
-func getEnv(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return defaultValue
-	}
-	return value
+var log = logrus.New()
+
+func init() {
+	log.SetFormatter(&logrus.JSONFormatter{})
+}
+
+func main() {
+	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "~> ${{ values.apiName | lower }} It's live.")
+	})
+
+	r.GET("/healthcheck", func(c *gin.Context) {
+		c.String(http.StatusOK, "~> ${{ values.apiName | lower }} is healthy.")
+	})
+
+	r.Run(":${{ values.port | lower }}")
+}
+
+func loggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		rw := &responseWriter{w, http.StatusOK}
+		next.ServeHTTP(rw, r)
+
+		duration := time.Since(start)
+
+		log.WithFields(logrus.Fields{
+			"method":      r.Method,
+			"url":         r.URL.Path,
+			"remote_addr": r.RemoteAddr,
+			"duration":    duration,
+			"statusCode":  rw.statusCode,
+		}).Info("Request completed")
+	})
 }
