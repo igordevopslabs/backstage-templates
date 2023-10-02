@@ -17,6 +17,5 @@ func main() {
 		c.String(http.StatusOK, "~> ${{ values.apiName | lower }} is healthy.")
 	})
 
-	//r.Run(":${{ values.port | lower }}")
-	r.Run(":3000")
+	r.Run(":${{ values.port | lower }}")
 }
