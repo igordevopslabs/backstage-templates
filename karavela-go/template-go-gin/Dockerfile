@@ -17,7 +17,7 @@ RUN adduser \
 WORKDIR /app
 COPY /src/ /app
 
-RUN CGO_ENABLED=1 GO111MODULES=on go build -ldflags="-s -w" .
+RUN go mod tidy && CGO_ENABLED=1 GO111MODULES=on go build -ldflags="-s -w" .
 
 FROM golang:${{ values.goVersion | lower }}
 

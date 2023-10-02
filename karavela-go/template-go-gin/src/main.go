@@ -1,34 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"os"
+
+	"github.com/gin-gonic/gin"
 )
-
-const (
-	defaultPort = "${{ values.port | lower }}"
-)
-
-type fixedResponse string
-
-func (s fixedResponse) ServeHTTP(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, s) }
 
 func main() {
-	http.Handle("/healthcheck", fixedResponse("~> ${{ values.apiName | lower }} is healthy..."))
-	http.Handle("/", fixedResponse(fmt.Sprintf("It's live!! ")))
+	r := gin.Default()
 
-	addr := fmt.Sprintf(":%s", getEnv("PORT", defaultPort))
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "~> ${{ values.apiName | lower }} It's live.")
+	})
 
-	log.Printf("listening on %s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, nil))
-}
+	r.GET("/healthcheck", func(c *gin.Context) {
+		c.String(http.StatusOK, "~> ${{ values.apiName | lower }} is healthy.")
+	})
 
-func getEnv(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return defaultValue
-	}
-	return value
+	//r.Run(":${{ values.port | lower }}")
+	r.Run(":3000")
 }
